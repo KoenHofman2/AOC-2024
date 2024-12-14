@@ -1,9 +1,8 @@
 package main
 
 import (
-	"bufio"
+	"aoc-2024/utils"
 	"fmt"
-	"os"
 	"slices"
 	"strconv"
 	"strings"
@@ -21,7 +20,7 @@ func main() {
 	var distance int
 
 	for i, _ := range left {
-		distance += absDiff(left[i], right[i])
+		distance += utils.AbsoluteDifference(left[i], right[i])
 	}
 
 	var similarityScore int
@@ -37,14 +36,8 @@ func main() {
 }
 
 func leftAndRightFromFile() ([]int, []int, map[int]int) {
-	file, err := os.Open("day1/day1.txt")
-	if err != nil {
-		panic(err)
-	}
-
+	scanner, file := utils.ReadTxtFile("day1/day1.txt")
 	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
 
 	var (
 		left, right []int
@@ -78,12 +71,4 @@ func leftAndRightFromFile() ([]int, []int, map[int]int) {
 	}
 
 	return left, right, rightMap
-}
-
-func absDiff(a, b int) int {
-	if a > b {
-		return a - b
-	}
-
-	return b - a
 }
