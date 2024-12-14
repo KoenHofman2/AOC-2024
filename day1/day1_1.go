@@ -13,7 +13,7 @@ import (
 func main() {
 	start := time.Now()
 
-	left, right := leftAndRightFromFile()
+	left, right, rightMap := leftAndRightFromFile()
 
 	slices.Sort(left)
 	slices.Sort(right)
@@ -24,12 +24,19 @@ func main() {
 		distance += absDiff(left[i], right[i])
 	}
 
-	fmt.Println(distance)
-	fmt.Println(time.Since(start).Nanoseconds())
+	var similarityScore int
+
+	for _, leftValue := range left {
+		similarityScore += leftValue * rightMap[leftValue]
+	}
+
+	fmt.Println("distance: ", distance)
+	fmt.Println("similarityScore: ", similarityScore)
+	fmt.Println("elapsed  time: ", time.Since(start).Nanoseconds())
 
 }
 
-func leftAndRightFromFile() ([]int, []int) {
+func leftAndRightFromFile() ([]int, []int, map[int]int) {
 	file, err := os.Open("day1/day1.txt")
 	if err != nil {
 		panic(err)
@@ -39,7 +46,10 @@ func leftAndRightFromFile() ([]int, []int) {
 
 	scanner := bufio.NewScanner(file)
 
-	var left, right []int
+	var (
+		left, right []int
+		rightMap    = make(map[int]int)
+	)
 
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -58,7 +68,22 @@ func leftAndRightFromFile() ([]int, []int) {
 
 		left = append(left, leftNumber)
 		right = append(right, rightNumber)
+
+		rightValue, ok := rightMap[rightNumber]
+		if ok {
+			rightMap[rightNumber] = rightValue + 1
+		} else {
+			rightMap[rightNumber] = 1
+		}
 	}
 
-	return left, right
+	return left, right, rightMap
+}
+
+func absDiff(a, b int) int {
+	if a > b {
+		return a - b
+	}
+
+	return b - a
 }
