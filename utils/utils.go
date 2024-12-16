@@ -14,6 +14,15 @@ func ReadTxtFile(filePath string) (*bufio.Scanner, *os.File) {
 	return bufio.NewScanner(file), file
 }
 
+func ReadRawTxtFile(filePath string) string {
+	content, err := os.ReadFile(filePath)
+	if err != nil {
+		panic(err)
+	}
+
+	return string(content)
+}
+
 func AbsoluteDifference(a, b int) int {
 	if a > b {
 		return a - b
